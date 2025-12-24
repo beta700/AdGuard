@@ -1,15 +1,16 @@
 FROM adguard/adguardhome:latest
 
-# إنشاء مجلدات العمل ومنح الصلاحيات اللازمة
+# إنشاء مجلدات العمل ومنحها صلاحيات كاملة
+USER root
 RUN mkdir -p /opt/adguardhome/conf /opt/adguardhome/work && \
-    chmod -R 777 /opt/adguardhome/conf /opt/adguardhome/work
+    chmod -R 777 /opt/adguardhome/conf /opt/adguardhome/work && \
+    chmod +x /opt/adguardhome/AdGuardHome
 
-# تشغيل البرنامج باستخدام مستخدم بصلاحيات محدودة لتجنب خطأ Permission
-USER 1000
-
+# تعيين منفذ Render الافتراضي
+ENV PORT=10000
 EXPOSE 10000
 
-# الأمر النهائي للتشغيل مع تحديد مسارات العمل
+# التشغيل بدون استخدام ميزات تحتاج صلاحيات Root
 CMD ["/opt/adguardhome/AdGuardHome", \
      "--work-dir", "/opt/adguardhome/work", \
      "--conf", "/opt/adguardhome/conf/AdGuardHome.yaml", \
